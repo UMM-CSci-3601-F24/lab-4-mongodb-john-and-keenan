@@ -3,16 +3,13 @@ package umm3601.todo;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,21 +20,16 @@ import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.eclipse.jdt.internal.compiler.ast.InstanceOfExpression;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.exceptions.misusing.InjectMocksException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
@@ -53,8 +45,6 @@ import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.BodyValidator;
 import io.javalin.validation.Validation;
-import io.javalin.validation.ValidationError;
-import io.javalin.validation.ValidationException;
 import io.javalin.validation.Validator;
 
 @SuppressWarnings({ "MagicNumber" })
@@ -82,7 +72,8 @@ class TodoControllerSpec {
         String mongoAddr = System.getenv().getOrDefault("MONGO_ADDR", "localhost");
 
         mongoClient = MongoClients.create(
-            MongoClientSettings.builder().applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(mongoAddr)))).build());
+            MongoClientSettings.builder().applyToClusterSettings(builder ->
+            builder.hosts(Arrays.asList(new ServerAddress(mongoAddr)))).build());
             db = mongoClient.getDatabase("test");
     }
 
@@ -150,7 +141,8 @@ class TodoControllerSpec {
         todoController.getTodos(ctx);
         verify(ctx).json(todoArrayListCaptor.capture());
         verify(ctx).status(HttpStatus.OK);
-        assertEquals(db.getCollection("todos").countDocuments(), todoArrayListCaptor.getValue().size());
+        assertEquals(db.getCollection("todos").countDocuments(),
+        todoArrayListCaptor.getValue().size());
     }
 
     @Test
@@ -178,7 +170,8 @@ class TodoControllerSpec {
             assertEquals(targetCategory, todo.category);
         }
 
-        List<String> owners = todoArrayListCaptor.getValue().stream().map(todo -> todo.owner).collect(Collectors.toList());
+        List<String> owners = todoArrayListCaptor.getValue().stream().map(todo ->
+        todo.owner).collect(Collectors.toList());
         assertTrue(owners.contains("Jason"));
         assertTrue(owners.contains("Bryan"));
     }
@@ -240,16 +233,15 @@ class TodoControllerSpec {
 
     @Test
 void canGetTodoById() throws IOException {
-    // Given
-    ObjectId todoId = new ObjectId();
+
+    ObjectId newTodoId = new ObjectId();
     Todo expectedTodo = new Todo();
     expectedTodo._id = todoId.toHexString();
     expectedTodo.owner = "Borat";
     expectedTodo.category = "clean";
     expectedTodo.body = "bathroom and bedroom";
 
-    // Insert the todo into the database
-    db.getCollection("todos").insertOne(new Document("_id", todoId)
+    db.getCollection("todos").insertOne(new Document("_id", newTodoId)
         .append("owner", expectedTodo.owner)
         .append("category", expectedTodo.category)
         .append("body", expectedTodo.body));
@@ -335,7 +327,8 @@ void canGetTodosWithStatus() throws IOException {
     when(ctx.queryParam(TodoController.STATUS_KEY)).thenReturn(String.valueOf(targetStatus));
 
     Validation validation = new Validation();
-    Validator<String> validator = validation.validator(TodoController.STATUS_KEY, String.class, String.valueOf(targetStatus));
+    Validator<String> validator = validation.validator(TodoController.STATUS_KEY, String.class,
+    String.valueOf(targetStatus));
     when(ctx.queryParamAsClass(TodoController.STATUS_KEY, String.class)).thenReturn(validator);
 
 
@@ -366,7 +359,8 @@ void addTodo() throws IOException {
 
     String newTodoJson = javalinJackson.toJsonString(newTodo, Todo.class);
     when(ctx.bodyValidator(Todo.class))
-    .thenReturn(new BodyValidator<Todo>(newTodoJson, Todo.class, () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+    .thenReturn(new BodyValidator<Todo>(newTodoJson, Todo.class, () ->
+    javalinJackson.fromJsonString(newTodoJson, Todo.class)));
 
 todoController.addNewTodo(ctx);
 verify(ctx).json(mapCaptor.capture());

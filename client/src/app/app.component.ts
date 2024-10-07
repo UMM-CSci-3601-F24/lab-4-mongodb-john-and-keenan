@@ -11,7 +11,16 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     standalone: true,
-    imports: [MatSidenavModule, MatToolbarModule, MatListModule, RouterLink, RouterLinkActive, MatIconModule, MatButtonModule, RouterOutlet]
+    imports: [
+      MatSidenavModule,
+      MatToolbarModule,
+      MatListModule,
+      RouterLink,
+      RouterLinkActive,
+      MatIconModule,
+      MatButtonModule,
+      RouterOutlet,
+    ]
 })
 export class AppComponent {
   title = 'CSci 3601 Lab 4';

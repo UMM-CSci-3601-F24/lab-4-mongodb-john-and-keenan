@@ -17,7 +17,15 @@ import { MatCardModule } from '@angular/material/card';
     templateUrl: './add-user.component.html',
     styleUrls: ['./add-user.component.scss'],
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule]
+    imports: [
+      FormsModule,
+      ReactiveFormsModule,
+      MatCardModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatSelectModule,
+      MatOptionModule,
+      MatButtonModule]
 })
 export class AddUserComponent {
 
